@@ -1,0 +1,241 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------
+   Brand tokens — pulled from the IRA logo (deep forest ring, leaf
+   green) and the visiting card (lime band, kraft paper, cream).
+------------------------------------------------------------------ */
+@theme {
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-forest-950: #071d0e;
+  --color-forest-900: #0b3018;
+  --color-forest-800: #0e3a20;
+  --color-forest-700: #14532d;
+  --color-forest-600: #1c6b39;
+  --color-forest-500: #2f7d3a;
+  --color-leaf-500: #6ca83e;
+  --color-leaf-400: #8bbe57;
+
+  --color-lime-brand: #a7c934;
+  --color-lime-soft: #c4db60;
+  --color-lime-pale: #eaf3cd;
+
+  --color-kraft-600: #b8945f;
+  --color-kraft-500: #ceaf80;
+  --color-kraft-300: #e2cba6;
+  --color-sand: #eee4ce;
+  --color-cream: #f7f2e7;
+  --color-soil: #4a3728;
+  --color-ink: #12211a;
+
+  --ease-brand: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 92px;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection { background: var(--color-lime-brand); color: var(--color-forest-900); }
+
+  ::-webkit-scrollbar { width: 11px; }
+  ::-webkit-scrollbar-track { background: var(--color-sand); }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-forest-600);
+    border-radius: 99px;
+    border: 3px solid var(--color-sand);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-forest-800); }
+}
+
+/* ------------------------------------------------------------------
+   Scroll reveal — driven by useReveal()
+------------------------------------------------------------------ */
+.reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.9s var(--ease-brand),
+    transform 0.9s var(--ease-brand);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+.reveal.is-in { opacity: 1; transform: none; }
+
+/* The slide distance is kept inside the container's own gutter (px-5 =
+   20px), so an entrance animation can never push content past the
+   viewport edge. The wider travel is restored only once the centred
+   max-w-7xl container has real margin either side. */
+.reveal-left  { transform: translateX(-18px); }
+.reveal-right { transform: translateX(18px); }
+
+@media (min-width: 1400px) {
+  .reveal-left  { transform: translateX(-34px); }
+  .reveal-right { transform: translateX(34px); }
+}
+.reveal-scale { transform: scale(0.94); }
+.reveal-blur  { filter: blur(9px); transition-property: opacity, transform, filter; }
+.reveal-blur.is-in { filter: blur(0); }
+
+/* Words that rise one after another in the hero headline */
+.word-rise > span {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.9em) rotate(2deg);
+  animation: wordRise 1.05s var(--ease-brand) forwards;
+}
+@keyframes wordRise {
+  to { opacity: 1; transform: none; }
+}
+
+/* ------------------------------------------------------------------
+   Motion primitives
+------------------------------------------------------------------ */
+@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+@keyframes floaty  { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
+@keyframes sway    { 0%,100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
+@keyframes pulseRing {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  70%  { transform: scale(1.7); opacity: 0; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+@keyframes shimmer { to { background-position: 200% center; } }
+@keyframes fadeUp  { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+
+.animate-marquee { animation: marquee 34s linear infinite; }
+.animate-floaty  { animation: floaty 7s ease-in-out infinite; }
+.animate-sway    { animation: sway 6s ease-in-out infinite; transform-origin: bottom center; }
+
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 9%, #000 91%, transparent);
+}
+
+/* Gradient text used on dark bands */
+.text-gradient {
+  background: linear-gradient(100deg, #ffffff 12%, var(--color-lime-soft) 46%, #ffffff 82%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 9s linear infinite;
+}
+
+/* ------------------------------------------------------------------
+   Surfaces
+------------------------------------------------------------------ */
+.glass {
+  background: color-mix(in srgb, var(--color-cream) 78%, transparent);
+  backdrop-filter: blur(16px) saturate(150%);
+  -webkit-backdrop-filter: blur(16px) saturate(150%);
+}
+
+.card-hover {
+  transition:
+    transform 0.55s var(--ease-brand),
+    box-shadow 0.55s var(--ease-brand),
+    border-color 0.55s var(--ease-brand);
+}
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 26px 60px -22px rgba(14, 58, 32, 0.34);
+}
+
+.paper-grain {
+  background-image:
+    radial-gradient(circle at 20% 15%, rgba(167, 201, 52, 0.09), transparent 42%),
+    radial-gradient(circle at 82% 78%, rgba(20, 83, 45, 0.07), transparent 46%);
+}
+
+.rule-leaf::after {
+  content: "";
+  display: block;
+  width: 62px;
+  height: 3px;
+  border-radius: 99px;
+  margin-top: 18px;
+  background: linear-gradient(90deg, var(--color-lime-brand), var(--color-forest-600));
+}
+
+/* Underline that grows on hover — nav links */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -5px;
+  height: 2px;
+  width: 100%;
+  background: var(--color-lime-brand);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s var(--ease-brand);
+}
+.nav-link:hover::after,
+.nav-link[data-active="true"]::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Small inline links keep their exact desktop layout, but on touch
+   devices get a ~44px hit area via an invisible overlay. */
+@media (pointer: coarse) {
+  .tap { position: relative; }
+  .tap::after {
+    content: "";
+    position: absolute;
+    inset: -12px -10px;
+  }
+}
+
+/* Primary button with a sweeping sheen */
+.btn-sheen { position: relative; overflow: hidden; isolation: isolate; }
+.btn-sheen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(120deg, transparent 20%, rgba(255, 255, 255, 0.34) 50%, transparent 80%);
+  transform: translateX(-120%);
+  transition: transform 0.75s var(--ease-brand);
+}
+.btn-sheen:hover::before { transform: translateX(120%); }
+
+/* ------------------------------------------------------------------
+   Reduced motion.
+
+   We drop the large, looping and decorative movement — parallax,
+   marquees, drifting leaves, sliding reveals — but deliberately keep
+   short opacity and colour transitions. Killing those too made the
+   whole site feel dead on machines that simply have desktop
+   animations switched off.
+------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  /* reveals fade in place rather than sliding */
+  .reveal { transform: none !important; filter: none !important; }
+
+  .word-rise > span { transform: none; animation-name: fadeIn; }
+
+  .animate-marquee,
+  .animate-floaty,
+  .animate-sway,
+  .text-gradient { animation: none !important; }
+}
